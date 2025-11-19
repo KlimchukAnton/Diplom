@@ -16,7 +16,7 @@ class SearchByAuthor:
         self.author_name = author_name
 
     @allure.step("Поиск книги по автору")
-    def search_by_author(self, driver: webdriver.Chrome) -> None:
+    def search_by_author(self, driver: webdriver, author_name) -> None:
         """
         Поиск книг по имени автора на сайте Читай-город.
 
@@ -25,11 +25,12 @@ class SearchByAuthor:
         """
         try:
             # Ввод имени автора в строку поиска
-            search_input = driver.find_element(By.NAME, "phrase")
+            search_input = driver.find_element(By.NAME, "search")
             search_input.send_keys(self.author_name)
 
             # Клик по кнопке поиска
-            search_button = driver.find_element(By.CSS_SELECTOR, "button[aria-label='Найти']")
+            search_button = driver.find_element(By.CSS_SELECTOR, 
+                                                "button[aria-label='Найти']")
             search_button.click()
 
         except Exception as error:
@@ -39,3 +40,4 @@ class SearchByAuthor:
                 attachment_type=allure.attachment_type.TEXT,
             )
             raise
+ 

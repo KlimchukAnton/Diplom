@@ -1,6 +1,9 @@
 import allure
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 from constants import UI_url
 from pages.Search_By_Author_ui import SearchByAuthor
 from pages.Search_By_Title_ui import SearchByTitle
@@ -29,11 +32,13 @@ def test_search_by_author():
 
     with allure.step("Найти книгу по автору Франк Тилье"):
         author_name = "Франк Тилье"
-        search_by_author(author_name)
+        search_instance = SearchByAuthor(author_name)
+        search_instance.search_by_author(driver, author_name)
 
     with allure.step("Получить результаты поиска"):
-        results_find = driver.find_element(By.CLASS_NAME, "product-title__author")
-
+        results_find = WebDriverWait(driver, 10).until(
+         EC.presence_of_element_located((By.CLASS_NAME, "search-title__sub")))
+    
     with allure.step("Проверить, что поиск по автору успешен"):
         assert results_find is not None
 
@@ -53,12 +58,14 @@ def test_add_to_cart():
     with allure.step("Перейти на сайт Читай-город"):
         driver.get(UI_url)
 
-    with allure.step("Добавить в корзину книгу с названием 'Ветреный'"):
-        book_title = "Ветреный"
-        add_to_cart(book_title)
+    with allure.step("Добавить в корзину книгу с названием 'Головоломка'"):
+        book_title = "Головоломка"
+        search_name = AddToCart(book_title)
+        search_name.search_by_title(driver, book_title)
 
     with allure.step("Получить результаты добавления в корзину"):
-        results_add = driver.find_element(By.CSS_SELECTOR, "div.product-title__head")
+        results_add = driver.find_element(By.CSS_SELECTOR, 
+                                          "button[aria-label='Корзина']")
 
     with allure.step("Проверить, что корзина не пуста"):
         assert results_add is not None
